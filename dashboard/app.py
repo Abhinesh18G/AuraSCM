@@ -37,7 +37,7 @@ default_b = open("sample_repo/branch_b.py").read()
 
 if mode == "🔗 Live GitHub Repository":
     st.sidebar.subheader("GitHub Repo Settings")
-    gh_repo = st.sidebar.text_input("GitHub Repo (owner/repo)", value="your-username/AuraSCM")
+    gh_repo = st.sidebar.text_input("GitHub Repo (owner/repo)", value="Abhinesh18G/AuraSCM")
     gh_branch_a = st.sidebar.text_input("Base Branch (Branch A)", value="main")
     gh_branch_b = st.sidebar.text_input("PR / Feature Branch (Branch B)", value="feature-discount")
     gh_filepath = st.sidebar.text_input("Python File Path in Repo", value="sample_repo/branch_a.py")
