@@ -1,9 +1,7 @@
-"""AuraSCM Dashboard — With Live GitHub Repository & Branch Integration"""
-import sys
+﻿import sys
 import os
 import tempfile
 import urllib.request
-import json
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import streamlit as st
@@ -20,7 +18,6 @@ st.title("AuraSCM — AI-Driven GitHub Semantic Merge & Compliance Gate")
 st.caption("Live GitHub Pull Request / Branch Inspector & CI/CD Pre-Merge Gate")
 
 def fetch_github_file(repo: str, branch: str, filepath: str) -> str:
-    """Fetches a raw Python file directly from GitHub."""
     url = f"https://raw.githubusercontent.com/{repo}/{branch}/{filepath}"
     req = urllib.request.Request(url, headers={"User-Agent": "AuraSCM-App"})
     with urllib.request.urlopen(req, timeout=10) as response:
@@ -32,8 +29,8 @@ mode = st.sidebar.radio(
     ["🔗 Live GitHub Repository", "💻 Local Demo / Paste Code"]
 )
 
-default_a = open("sample_repo/branch_a.py").read()
-default_b = open("sample_repo/branch_b.py").read()
+default_a = open("sample_repo/branch_a.py", encoding="utf-8").read()
+default_b = open("sample_repo/branch_b.py", encoding="utf-8").read()
 
 if mode == "🔗 Live GitHub Repository":
     st.sidebar.subheader("GitHub Repo Settings")
