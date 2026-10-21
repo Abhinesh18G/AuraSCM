@@ -1,4 +1,4 @@
-name: AuraSCM Semantic & Compliance PR Gate
+﻿name: AuraSCM Semantic & Compliance PR Gate
 
 on:
   pull_request:
@@ -28,12 +28,6 @@ jobs:
         run: |
           git fetch origin ${{ github.base_ref }}
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- '*.py')
-          if [ -z "$CHANGED_FILES" ]; then
-            echo "No Python files changed in this PR. Running demo check..."
-            python aurascm_cli.py sample_repo/branch_a.py sample_repo/branch_b.py
-            exit 0
-          fi
-
           OVERALL_STATUS=0
           for FILE in $CHANGED_FILES; do
             if git cat-file -e origin/${{ github.base_ref }}:"$FILE" 2>/dev/null; then

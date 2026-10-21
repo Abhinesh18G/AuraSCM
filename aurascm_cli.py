@@ -1,11 +1,4 @@
-"""
-AuraSCM - Real GitHub CI/CD Pull Request Gate (CLI)
----------------------------------------------------
-Runs automatically inside GitHub Actions on every Pull Request, or locally
-between any two Git branches/files. Exits with code 1 to BLOCK the GitHub PR
-merge if semantic conflicts, ML risk, or security/license violations are found.
-"""
-import sys
+﻿import sys
 import os
 import tempfile
 import argparse
@@ -25,23 +18,21 @@ def analyze_files(file_a_path: str, file_b_path: str, display_name: str = "targe
         code_b = f.read()
 
     print("=" * 65)
-    print(f"🚀 AuraSCM GitHub PR Gate — Analyzing: {display_name}")
+    print(f"AuraSCM GitHub PR Gate - Analyzing: {display_name}")
     print("=" * 65)
 
-    # 1. Semantic Merge Engine
     conflicts = diff_versions(code_a, code_b)
     print(f"\n[1] SEMANTIC MERGE ENGINE: {len(conflicts)} conflict(s) detected")
     for c in conflicts:
-        print(f"    ⚠️  {c.conflict_type} in `{c.function_name}` (heuristic risk: {c.risk_score})")
+        print(f"    WARNING: {c.conflict_type} in `{c.function_name}` (heuristic risk: {c.risk_score})")
 
-    # 2. Dependency Graph & 3. ML Predictor
     graph = build_call_graph(code_b)
     model = load_model()
     ml_flagged_risky = False
 
     print("\n[2 & 3] DEPENDENCY BLAST RADIUS & ML RISK PREDICTION:")
     if not conflicts:
-        print("    ✅ No modified function conflicts to evaluate.")
+        print("    OK: No modified function conflicts to evaluate.")
     for c in conflicts:
         affected = blast_radius(graph, c.function_name)
         depth = dependency_depth(graph, c.function_name)
@@ -55,24 +46,20 @@ def analyze_files(file_a_path: str, file_b_path: str, display_name: str = "targe
         pred = predict_risk(features, model)
         if pred["prediction"] == "RISKY":
             ml_flagged_risky = True
-        print(f"    🔍 `{c.function_name}` -> Blast Radius: {affected or 'none'} (depth={depth}) "
-              f"| ML Verdict: {pred['prediction']} (prob={pred['risk_probability']})")
+        print(f"    `{c.function_name}` -> Blast Radius: {affected or 'none'} (depth={depth}) | ML Verdict: {pred['prediction']} (prob={pred['risk_probability']})")
 
-    # 4. Compliance Engine
     tmp_path = os.path.join(tempfile.gettempdir(), "_branch_b_ci_check.py")
     with open(tmp_path, "w", encoding="utf-8") as f:
         f.write(code_b)
     gate = evaluate_merge_gate(tmp_path)
     print(f"\n[4] COMPLIANCE ENGINE (Bandit SAST & License):")
-    print(f"    🛡️  Approved: {gate['merge_approved']} | Issues Found: {gate['security_summary'].get('issues_found', 0)}")
+    print(f"    Approved: {gate['merge_approved']} | Issues Found: {gate['security_summary'].get('issues_found', 0)}")
 
-    # 5. Self-Healing Engine
     if conflicts:
         print("\n[5] SELF-HEALING SUGGESTIONS:")
         for c in conflicts:
-            print(f"    💡 `{c.function_name}`: {suggest_resolution(c)}")
+            print(f"    `{c.function_name}`: {suggest_resolution(c)}")
 
-    # Final Decision
     blocking = [c for c in conflicts if c.conflict_type in BLOCKING_TYPES]
     reasons = []
     if blocking:
@@ -85,13 +72,13 @@ def analyze_files(file_a_path: str, file_b_path: str, display_name: str = "targe
 
     print("\n" + "=" * 65)
     if reasons:
-        print("❌ FINAL VERDICT: MERGE BLOCKED")
+        print("FINAL VERDICT: MERGE BLOCKED")
         for r in reasons:
             print(f"   - {r}")
         print("=" * 65)
         return False
     else:
-        print("✅ FINAL VERDICT: MERGE ALLOWED")
+        print("FINAL VERDICT: MERGE ALLOWED")
         print("=" * 65)
         return True
 
