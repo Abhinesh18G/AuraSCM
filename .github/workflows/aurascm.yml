@@ -1,0 +1,44 @@
+name: AuraSCM Semantic & Compliance PR Gate
+
+on:
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  aurascm-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR Branch (Branch B)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install AuraSCM Dependencies
+        run: |
+          pip install -r requirements.txt
+          python data/generate_dataset.py
+          python conflict_prediction/predict.py
+
+      - name: Run AuraSCM on Changed Python Files in PR
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- '*.py')
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No Python files changed in this PR. Running demo check..."
+            python aurascm_cli.py sample_repo/branch_a.py sample_repo/branch_b.py
+            exit 0
+          fi
+
+          OVERALL_STATUS=0
+          for FILE in $CHANGED_FILES; do
+            if git cat-file -e origin/${{ github.base_ref }}:"$FILE" 2>/dev/null; then
+              git show origin/${{ github.base_ref }}:"$FILE" > /tmp/base_version.py
+              python aurascm_cli.py /tmp/base_version.py "$FILE" || OVERALL_STATUS=1
+            fi
+          done
+          exit $OVERALL_STATUS
