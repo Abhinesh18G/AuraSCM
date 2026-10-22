@@ -5,11 +5,16 @@ of a flat amount -- a semantic conflict that plain text diff/Git would
 often merge silently if the surrounding lines don't overlap.
 """
 
+"""
+Sample module: order_service.py (Branch A - feature/discount-fix)
+This branch changes the signature and logic of calculate_total().
+"""
+
 
 def calculate_total(price, quantity, discount=0):
-    """Branch B: discount applied as a percentage (0-100)."""
+    """Branch A: discount applied as a flat amount."""
     subtotal = price * quantity
-    total = subtotal - (subtotal * (discount / 100))
+    total = subtotal - discount
     return total
 
 
