@@ -5,6 +5,11 @@ of a flat amount -- a semantic conflict that plain text diff/Git would
 often merge silently if the surrounding lines don't overlap.
 """
 
+"""
+Sample module: order_service.py (Branch A - feature/discount-fix)
+This branch changes the signature and logic of calculate_total().
+"""
+
 
 """
 Sample module: order_service.py (Branch A - feature/discount-fix)
