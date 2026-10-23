@@ -1,13 +1,15 @@
 """
-Sample module: order_service.py (Branch A - feature/discount-fix)
-This branch changes the signature and logic of calculate_total().
+Sample module: order_service.py (Branch B - feature/percentage-discount)
+This branch changes calculate_total() to use a PERCENTAGE discount instead
+of a flat amount -- a semantic conflict that plain text diff/Git would
+often merge silently if the surrounding lines don't overlap.
 """
 
 
 def calculate_total(price, quantity, discount=0):
-    """Branch A: discount applied as a flat amount."""
+    """Branch B: discount applied as a percentage (0-100)."""
     subtotal = price * quantity
-    total = subtotal - discount
+    total = subtotal - (subtotal * (discount / 100))
     return total
 
 
